@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.Entity.Category;
 import com.enotes.Service.CategoryService;
+import com.enotes.dto.CategoryDTO;
+import com.enotes.dto.CategoryResponse;
 
 @RestController
 @RequestMapping(CategoryController.basePath)
@@ -26,9 +28,11 @@ public class CategoryController {
 	private CategoryService categoryservice;													  //BASEPATH, AND FINAL BECAUSE ANNOTATION REQUIRED CONSTANTS
 	
 	@PostMapping("/save-category")
-	public ResponseEntity<?> saveCategory(@RequestBody Category category)
+	public ResponseEntity<?> saveCategory(@RequestBody CategoryDTO categorydto)
 	{
-		Boolean saveCategory = categoryservice.saveCategory(category);
+		//here in request body we will take data in dto, as it will be a layer that will be acting between our entity
+		// and we can return the "ONLY" data we want to show.
+		Boolean saveCategory = categoryservice.saveCategory(categorydto);
 		if(saveCategory) return new ResponseEntity<>("saved", HttpStatus.CREATED);
 		
 		else
@@ -39,7 +43,7 @@ public class CategoryController {
 	@GetMapping("/get-all")
 	public ResponseEntity<?> getAllCategory()
 	{
-		List<Category> categories = categoryservice.getAllCategory();
+		List<CategoryDTO> categories = categoryservice.getAllCategory();
 		if(CollectionUtils.isEmpty(categories))
 		{
 			return ResponseEntity.noContent().build();
@@ -47,6 +51,20 @@ public class CategoryController {
 		else
 		{
 			return new ResponseEntity<>(categories, HttpStatus.OK);
+		}
+	}
+	
+	@GetMapping("/active-category")
+	public ResponseEntity<?> getActiveCategory()
+	{
+		List<CategoryResponse> activeCategory = categoryservice.getActiveCategory();
+		if(CollectionUtils.isEmpty(activeCategory))
+		{
+			return ResponseEntity.noContent().build();
+		}
+		else
+		{
+			return new ResponseEntity<>(activeCategory, HttpStatus.OK);
 		}
 	}
 
